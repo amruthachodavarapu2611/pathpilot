@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: pathpilot
+    env: docker
+    plan: free
+    healthCheckPath: /

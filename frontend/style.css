@@ -1,0 +1,805 @@
+/* =====================================================
+   PATHPILOT
+   COMPLETE CSS
+===================================================== */
+
+
+/* ================= GLOBAL ================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+body {
+    font-family: Georgia, "Times New Roman", serif;
+
+    background: #f3f0e9;
+
+    color: #111827;
+
+    min-height: 100vh;
+}
+
+
+/* ================= HEADER ================= */
+
+header {
+    width: 100%;
+
+    padding: 22px 6%;
+
+    background: #17231f;
+
+    color: #f9f6ef;
+
+    border-bottom: 1px solid #e5e7eb;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+}
+
+
+.logo {
+    font-size: 25px;
+
+    font-weight: 800;
+}
+
+
+.tagline {
+    color: #b8c6b9;
+
+    font-size: 14px;
+}
+
+
+/* ================= MAIN ================= */
+
+main {
+    width: 100%;
+
+    max-width: 1150px;
+
+    margin: auto;
+
+    padding: 52px 25px 80px;
+}
+
+
+/* ================= HERO ================= */
+
+.hero {
+    text-align: center;
+
+    margin-bottom: 35px;
+}
+
+
+.eyebrow {
+    color: #c46b45;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.5px;
+
+    margin-bottom: 12px;
+}
+
+
+.hero h1 {
+    font-size: 48px;
+
+    line-height: 1.15;
+
+    margin-bottom: 18px;
+}
+
+
+.hero h1 span {
+    color: #c46b45;
+}
+
+
+.hero p {
+    max-width: 700px;
+
+    margin: auto;
+
+    color: #6b7280;
+
+    font-size: 17px;
+
+    line-height: 1.7;
+}
+
+
+/* ================= CARD ================= */
+
+.card {
+    background: #fffdf8;
+
+    border-radius: 8px;
+
+    padding: 35px;
+
+    border: 1px solid #e5e7eb;
+
+    box-shadow: 0 18px 45px rgba(23, 35, 31, 0.1);
+}
+
+
+.card h2 {
+    font-size: 25px;
+
+    margin-bottom: 30px;
+}
+
+
+/* ================= GRID ================= */
+
+.grid {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 28px 25px;
+}
+
+
+/* ================= LABEL ================= */
+
+label {
+    display: block;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    margin-bottom: 10px;
+}
+
+
+/* ================= INPUT ================= */
+
+input,
+select {
+    width: 100%;
+
+    height: 58px;
+
+    padding: 0 16px;
+
+    border: 1px solid #d9dee8;
+
+    border-radius: 6px;
+
+    background: white;
+
+    color: #111827;
+
+    font-size: 16px;
+
+    outline: none;
+
+    transition: 0.2s;
+}
+
+
+input:focus,
+select:focus {
+    border-color: #c46b45;
+
+    box-shadow:
+        0 0 0 3px rgba(196, 107, 69, 0.15);
+}
+
+
+input::placeholder {
+    color: #9ca3af;
+}
+
+
+small {
+    display: block;
+
+    margin-top: 9px;
+
+    color: #8a94a6;
+
+    font-size: 14px;
+}
+
+
+/* ================= FULL FIELD ================= */
+
+.fullField {
+    margin-top: 28px;
+}
+
+
+/* ================= DAYS ================= */
+
+.days {
+    margin-top: 25px;
+
+    margin-bottom: 25px;
+}
+
+
+#dayButtons {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+}
+
+
+.day {
+    min-width: 62px;
+
+    height: 45px;
+
+    padding: 0 16px;
+
+    border: 1px solid #d9dee8;
+
+    border-radius: 11px;
+
+    background: white;
+
+    color: #374151;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+
+.day:hover {
+    border-color: #6c5ce7;
+
+    transform: translateY(-1px);
+}
+
+
+.day.active {
+    background: #c46b45;
+
+    border-color: #6c5ce7;
+
+    color: white;
+}
+
+
+/* ================= PRIMARY BUTTON ================= */
+
+.primary {
+    width: 100%;
+
+    height: 60px;
+
+    border: none;
+
+    border-radius: 6px;
+
+    background: #c46b45;
+
+    color: white;
+
+    font-size: 17px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+
+.primary:hover {
+    background: #a85131;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 20px rgba(196, 107, 69, 0.25);
+}
+
+
+.primary:disabled {
+    opacity: 0.6;
+
+    cursor: not-allowed;
+
+    transform: none;
+}
+
+
+/* =====================================================
+   IMPORTANT
+   FORM HIDE / DASHBOARD SHOW
+===================================================== */
+
+.hidden {
+    display: none !important;
+}
+
+
+/* ================= DASHBOARD ================= */
+
+#dashboard {
+    width: 100%;
+
+    margin-top: 30px;
+}
+
+
+/* ================= STATS ================= */
+
+.stats {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 18px;
+
+    margin-bottom: 22px;
+}
+
+
+.stat {
+    background: white;
+
+    padding: 25px 15px;
+
+    border-radius: 17px;
+
+    text-align: center;
+
+    border: 1px solid #e5e7eb;
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.04);
+}
+
+
+.stat b {
+    display: block;
+
+    font-size: 30px;
+
+    color: #6c5ce7;
+
+    margin-bottom: 7px;
+}
+
+
+.stat span {
+    color: #6b7280;
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+
+/* ================= PROGRESS ================= */
+
+.progressBox {
+    background: white;
+
+    border-radius: 17px;
+
+    padding: 25px;
+
+    border: 1px solid #e5e7eb;
+
+    margin-bottom: 30px;
+}
+
+
+.progressHeader {
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-bottom: 13px;
+}
+
+
+#progressText {
+    color: #6c5ce7;
+
+    font-weight: 700;
+}
+
+
+.bar {
+    width: 100%;
+
+    height: 11px;
+
+    background: #e9ebf1;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+}
+
+
+#barFill {
+    width: 0%;
+
+    height: 100%;
+
+    background: #6c5ce7;
+
+    border-radius: 20px;
+
+    transition: width 0.5s ease;
+}
+
+
+/* ================= MISSION HEADER ================= */
+
+.missionHeader {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 20px;
+
+    margin-bottom: 20px;
+}
+
+
+.missionHeader h2 {
+    font-size: 28px;
+
+    margin-top: 5px;
+}
+
+
+/* ================= SECONDARY ================= */
+
+.secondary {
+    height: 45px;
+
+    padding: 0 18px;
+
+    border: 1px solid #6c5ce7;
+
+    border-radius: 10px;
+
+    background: white;
+
+    color: #6c5ce7;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+
+.secondary:hover {
+    background: #6c5ce7;
+
+    color: white;
+}
+
+
+/* ================= DAY LABEL ================= */
+
+.dayLabel {
+    margin-top: 25px;
+
+    margin-bottom: 10px;
+
+    padding: 8px 12px;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    color: #6c5ce7;
+
+    letter-spacing: 0.5px;
+}
+
+
+/* ================= TASK ================= */
+
+.task {
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+    background: white;
+
+    padding: 18px;
+
+    margin-bottom: 12px;
+
+    border-radius: 15px;
+
+    border: 1px solid #e5e7eb;
+
+    box-shadow:
+        0 5px 18px rgba(0, 0, 0, 0.035);
+
+    transition: 0.2s;
+}
+
+
+.task:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 22px rgba(0, 0, 0, 0.07);
+}
+
+
+/* ================= CHECK ================= */
+
+.check {
+    width: 40px;
+
+    height: 40px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    border: 2px solid #6c5ce7;
+
+    background: white;
+
+    color: #6c5ce7;
+
+    font-size: 20px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+}
+
+
+.check:hover {
+    background: #6c5ce7;
+
+    color: white;
+}
+
+
+/* ================= TASK INFO ================= */
+
+.taskInfo {
+    flex: 1;
+}
+
+
+.taskInfo .title {
+    font-size: 17px;
+
+    font-weight: 700;
+
+    line-height: 1.4;
+}
+
+
+.taskInfo .time {
+    margin-top: 6px;
+
+    color: #6b7280;
+
+    font-size: 14px;
+}
+
+
+/* ================= DONE ================= */
+
+.task.done {
+    opacity: 0.6;
+}
+
+
+.task.done .title {
+    text-decoration: line-through;
+}
+
+
+.task.done .check {
+    background: #6c5ce7;
+
+    color: white;
+}
+
+
+/* ================= TOAST ================= */
+
+#toast {
+    position: fixed;
+
+    right: 25px;
+
+    bottom: 25px;
+
+    z-index: 9999;
+
+    background: #111827;
+
+    color: white;
+
+    padding: 14px 20px;
+
+    border-radius: 12px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.2);
+
+    opacity: 0;
+
+    transform: translateY(15px);
+
+    pointer-events: none;
+
+    transition: 0.3s;
+}
+
+
+#toast.show {
+    opacity: 1;
+
+    transform: translateY(0);
+}
+
+
+/* ================= TABLET ================= */
+
+@media (max-width: 850px) {
+
+    .hero h1 {
+        font-size: 40px;
+    }
+
+    .stats {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+}
+
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 650px) {
+
+    header {
+        flex-direction: column;
+
+        gap: 8px;
+
+        text-align: center;
+    }
+
+
+    main {
+        padding:
+            30px 15px 50px;
+    }
+
+
+    .hero h1 {
+        font-size: 32px;
+    }
+
+
+    .hero p {
+        font-size: 15px;
+    }
+
+
+    .card {
+        padding: 22px;
+    }
+
+
+    .grid {
+        grid-template-columns: 1fr;
+
+        gap: 20px;
+    }
+
+
+    .stats {
+        grid-template-columns:
+            1fr 1fr;
+
+        gap: 10px;
+    }
+
+
+    .missionHeader {
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+
+    .secondary {
+        width: 100%;
+    }
+
+}
+
+
+/* ================= SMALL MOBILE ================= */
+
+@media (max-width: 400px) {
+
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+
+    .hero h1 {
+        font-size: 28px;
+    }
+
+}
+
+/* Dashboard insights */
+.insightGrid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 18px; margin-bottom: 30px; }
+.panel { background: #fffdf8; border: 1px solid #ded8cc; border-radius: 8px; padding: 22px; }
+.panelHeading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+.panelHeading h3 { font-size: 22px; margin-top: 4px; }
+.iconButton { width: 42px; height: 42px; border: 1px solid #ded8cc; border-radius: 50%; background: #f3f0e9; cursor: pointer; }
+.iconButton.enabled { background: #d7e2d4; border-color: #8da18b; }
+.calendarDay { display: grid; grid-template-columns: 60px 1fr; gap: 14px; padding: 10px 0; border-top: 1px solid #ebe5da; }
+.calendarDate b, .calendarDate span { display: block; }
+.calendarDate b { color: #c46b45; }
+.calendarDate span { font-size: 12px; color: #7b8079; margin-top: 3px; }
+.calendarTasks { display: grid; gap: 6px; }
+.scheduleItem { font-size: 13px; color: #36433b; }
+.scheduleItem i { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #c46b45; margin: 0 7px 1px 0; }
+.scheduleItem.isDone { color: #8a928a; text-decoration: line-through; }
+.scheduleItem.isDone i { background: #879985; }
+.analytics { height: 145px; display: flex; align-items: end; gap: 10px; border-bottom: 1px solid #ded8cc; }
+.chartDay { flex: 1; display: grid; justify-items: center; gap: 5px; font-size: 11px; }
+.chartTrack { height: 92px; width: 100%; display: flex; align-items: end; background: #f0ece4; border-radius: 4px 4px 0 0; overflow: hidden; }
+.chartTrack span { width: 100%; background: #879985; min-height: 6px; }
+.chartDay small { color: #7b8079; }
+.xpTotal { color: #b35d39; font-size: 18px; }
+.achievements { display: flex; gap: 8px; margin-top: 18px; }
+.badge { flex: 1; padding: 10px 5px; text-align: center; border: 1px solid #ded8cc; color: #a2a59f; font-size: 11px; border-radius: 6px; }
+.badge b { display: block; font-size: 21px; filter: grayscale(1); margin-bottom: 4px; }
+.badge.earned { color: #36433b; background: #edf3eb; border-color: #b9cbb7; }
+.badge.earned b { filter: none; }
+
+@media (max-width: 850px) { .insightGrid { grid-template-columns: 1fr; } }

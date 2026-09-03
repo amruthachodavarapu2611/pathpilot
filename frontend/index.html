@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>PathPilot</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="logo">
+        🚀 PathPilot
+    </div>
+
+    <div class="tagline">
+        Your Goal. Your Roadmap. Your Time.
+    </div>
+
+</header>
+
+
+
+<main>
+
+
+<section class="hero">
+
+    <div class="eyebrow">
+        SMART LEARNING PLANNER
+    </div>
+
+    <h1>
+        Turn your goal into a
+        <span>daily mission.</span>
+    </h1>
+
+    <p>
+        Tell PathPilot what you want to achieve,
+        how much time you have and your current level.
+        We'll create your personalized learning schedule.
+    </p>
+
+</section>
+
+
+
+<section
+    class="card"
+    id="setupCard"
+>
+
+    <h2>
+        🎯 Create Your Plan
+    </h2>
+
+
+    <form id="planForm">
+
+
+        <div class="grid">
+
+
+            <div>
+
+                <label>
+                    What is your goal?
+                </label>
+
+                <input
+                    id="goal"
+                    type="text"
+                    placeholder="Example: Data Analyst"
+                    required
+                >
+
+            </div>
+
+
+
+            <div>
+
+                <label>
+                    Current Level
+                </label>
+
+                <select id="level">
+
+                    <option value="Beginner">
+                        Beginner
+                    </option>
+
+                    <option value="Intermediate">
+                        Intermediate
+                    </option>
+
+                    <option value="Advanced">
+                        Advanced
+                    </option>
+
+                </select>
+
+            </div>
+
+
+
+            <div>
+
+                <label>
+                    How many days?
+                </label>
+
+                <input
+                    id="days"
+                    type="number"
+                    min="1"
+                    max="365"
+                    value="45"
+                    required
+                >
+
+            </div>
+
+
+
+            <div>
+
+                <label>
+                    Daily Learning Time
+                </label>
+
+                <input
+                    id="minutes"
+                    type="number"
+                    min="20"
+                    value="60"
+                    required
+                >
+
+                <small>
+                    Minutes per day
+                </small>
+
+            </div>
+
+
+
+            <div>
+
+                <label>
+                    Start Time
+                </label>
+
+                <input
+                    id="startTime"
+                    type="time"
+                    value="18:00"
+                    required
+                >
+
+            </div>
+
+
+        </div>
+
+
+
+        <label>
+            What do you already know?
+        </label>
+
+        <input
+            id="knownSkills"
+            type="text"
+            placeholder="Example: Excel, Python Basics"
+        >
+
+
+
+        <div class="days">
+
+            <label>
+                Study Days
+            </label>
+
+            <div id="dayButtons"></div>
+
+        </div>
+
+
+
+        <!-- IMPORTANT: generateBtn ID added -->
+
+        <button
+            id="generateBtn"
+            class="primary"
+            type="submit"
+        >
+
+            ✨ Generate My Roadmap
+
+        </button>
+
+
+    </form>
+
+</section>
+
+
+
+<section
+    id="dashboard"
+    class="hidden"
+>
+
+
+<div class="stats">
+
+
+    <div class="stat">
+
+        <b id="totalTasks">
+            0
+        </b>
+
+        <span>
+            Total Missions
+        </span>
+
+    </div>
+
+
+    <div class="stat">
+
+        <b id="doneTasks">
+            0
+        </b>
+
+        <span>
+            Completed
+        </span>
+
+    </div>
+
+
+    <div class="stat">
+
+        <b id="progress">
+            0%
+        </b>
+
+        <span>
+            Progress
+        </span>
+
+    </div>
+
+
+    <div class="stat">
+
+        <b id="streak">
+            🔥 0
+        </b>
+
+        <span>
+            Streak
+        </span>
+
+    </div>
+
+
+</div>
+
+
+
+<div class="progressBox">
+
+    <div class="progressHeader">
+
+        <strong>
+            Your Journey
+        </strong>
+
+        <span id="progressText">
+            0%
+        </span>
+
+    </div>
+
+
+    <div class="bar">
+
+        <div id="barFill"></div>
+
+    </div>
+
+</div>
+
+<section class="insightGrid">
+    <div class="panel calendarPanel">
+        <div class="panelHeading">
+            <div>
+                <span class="eyebrow">THIS WEEK</span>
+                <h3>Daily schedule</h3>
+            </div>
+            <button class="iconButton" id="reminderBtn" type="button" title="Enable study reminders">🔔</button>
+        </div>
+        <div id="calendar" class="calendar"></div>
+    </div>
+
+    <div class="panel analyticsPanel">
+        <div class="panelHeading">
+            <div>
+                <span class="eyebrow">MOMENTUM</span>
+                <h3>Weekly progress</h3>
+            </div>
+            <strong id="xpTotal" class="xpTotal">0 XP</strong>
+        </div>
+        <div id="analytics" class="analytics"></div>
+        <div id="achievements" class="achievements"></div>
+    </div>
+</section>
+
+
+
+<div class="missionHeader">
+
+    <div>
+
+        <div class="eyebrow">
+            YOUR ROADMAP
+        </div>
+
+        <h2 id="goalTitle"></h2>
+
+    </div>
+
+
+    <button
+        class="secondary"
+        id="newPlan"
+        type="button"
+    >
+
+        + New Plan
+
+    </button>
+
+</div>
+
+
+
+<div id="taskList"></div>
+
+
+</section>
+
+
+</main>
+
+
+
+<div id="toast"></div>
+
+<script src="script.js?v=100"></script>
+
+</body>
+
+</html>
