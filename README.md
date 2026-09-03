@@ -1,6 +1,6 @@
 # PathPilot
 
-PathPilot turns a career goal into a scheduled learning roadmap with progress tracking, selected-day streaks, reminders, XP, achievements, and weekly analytics.
+PathPilot turns your goals into daily learning missions with progress tracking, selected-day streaks, reminders, XP, achievements, and weekly analytics.
 
 ## Run locally
 
