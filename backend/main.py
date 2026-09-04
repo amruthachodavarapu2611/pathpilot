@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 from typing import List
 from datetime import datetime, timedelta
@@ -456,7 +456,7 @@ def generate_tasks(request):
 
 @app.get("/")
 def home():
-    return FileResponse(os.path.join(FRONTEND_DIR, "index.html"))
+    return RedirectResponse(url="/frontend/index.html")
 
 
 # =========================
