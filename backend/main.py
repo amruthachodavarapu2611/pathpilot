@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import List
 from datetime import datetime, timedelta
@@ -455,10 +456,7 @@ def generate_tasks(request):
 
 @app.get("/")
 def home():
-
-    return {
-        "message": "🚀 PathPilot API is running!"
-    }
+    return FileResponse(os.path.join(FRONTEND_DIR, "index.html"))
 
 
 # =========================
