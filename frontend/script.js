@@ -12,7 +12,143 @@ const weekdays = [
 ];
 
 let currentPlanId = null;
+let audioContext = null;
+let reminderTimers = [];
 
+function playNotificationSound() {
+    audioContext ||= new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+    oscillator.frequency.value = 880;
+    gain.gain.setValueAtTime(0.0001, audioContext.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.12, audioContext.currentTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + 0.35);
+    oscillator.connect(gain).connect(audioContext.destination);
+    oscillator.start();
+    oscillator.stop(audioContext.currentTime + 0.35);
+}
+
+function getStartTime() {
+    let hour = Number(document.getElementById("startHour").value);
+    const period = document.getElementById("startPeriod").value;
+    if (period === "AM" && hour === 12) hour = 0;
+    if (period === "PM" && hour !== 12) hour += 12;
+    return `${String(hour).padStart(2, "0")}:${document.getElementById("startMinute").value}`;
+}
+
+function getSelectedMinutes(hourId, minuteId, periodId) {
+    let hour = Number(document.getElementById(hourId).value);
+    const period = document.getElementById(periodId).value;
+    if (period === "AM" && hour === 12) hour = 0;
+    if (period === "PM" && hour !== 12) hour += 12;
+    return hour * 60 + Number(document.getElementById(minuteId).value);
+}
+
+function getEndTime() {
+    const totalMinutes = getSelectedMinutes("endHour", "endMinute", "endPeriod");
+    return `${String(Math.floor(totalMinutes / 60)).padStart(2, "0")}:${String(totalMinutes % 60).padStart(2, "0")}`;
+}
+
+function formatClock(time) {
+    const [rawHour, minute] = time.split(":").map(Number);
+    const period = rawHour >= 12 ? "PM" : "AM";
+    const hour = rawHour % 12 || 12;
+    return `${hour}:${String(minute).padStart(2, "0")} ${period}`;
+}
+
+function scheduleNotifications(tasks) {
+    reminderTimers.forEach(timer => clearTimeout(timer));
+    reminderTimers = [];
+
+    if (localStorage.getItem("pathpilotReminders") !== "enabled" || !("Notification" in window)) {
+        return;
+    }
+
+    tasks.forEach(task => {
+        [
+            [task.start_time, "Start reading"],
+            [task.end_time, "Reading time is over"]
+        ].forEach(([time, message]) => {
+            const reminderDate = new Date(`${task.date}T${time}:00`);
+            const delay = reminderDate.getTime() - Date.now();
+            if (delay > 0) {
+                reminderTimers.push(setTimeout(() => {
+                    new Notification("PathPilot", { body: message });
+                    playNotificationSound();
+                }, delay));
+            }
+        });
+    });
+}
+
+function getSavedPlans() {
+    try {
+        const raw = localStorage.getItem("pathpilotPlans");
+        return raw ? JSON.parse(raw) : [];
+    } catch (error) {
+        console.error("Saved plans parse error:", error);
+        return [];
+    }
+}
+
+function saveSavedPlans(plans) {
+    localStorage.setItem("pathpilotPlans", JSON.stringify(plans));
+}
+
+function persistPlanSummary(goal) {
+    const plans = getSavedPlans();
+    if (!goal) return;
+
+    const normalizedGoal = goal.trim();
+    const index = plans.findIndex(plan => Number(plan.id) === Number(currentPlanId));
+
+    const entry = {
+        id: Number(currentPlanId),
+        goal: normalizedGoal,
+        createdAt: new Date().toISOString()
+    };
+
+    if (index >= 0) {
+        plans[index] = { ...plans[index], ...entry };
+    } else if (currentPlanId) {
+        plans.unshift(entry);
+    }
+
+    saveSavedPlans(plans.slice(0, 6));
+    renderSavedPlans();
+}
+
+function renderSavedPlans() {
+    const container = document.getElementById("savedPlansList");
+    if (!container) return;
+
+    const plans = getSavedPlans();
+    if (!plans.length) {
+        container.innerHTML = '<div class="savedPlanEmpty">No saved plans yet</div>';
+        return;
+    }
+
+    container.innerHTML = plans.map(plan => `
+        <button
+            class="savedPlan ${Number(plan.id) === Number(currentPlanId) ? "active" : ""}"
+            type="button"
+            data-plan-id="${plan.id}"
+        >
+            <span>${plan.goal}</span>
+            <small>#${plan.id}</small>
+        </button>
+    `).join("");
+
+    container.querySelectorAll(".savedPlan").forEach(button => {
+        button.addEventListener("click", async () => {
+            const planId = Number(button.dataset.planId);
+            if (!planId) return;
+            currentPlanId = planId;
+            localStorage.setItem("pathpilotPlanId", String(planId));
+            await restoreSavedPlan();
+        });
+    });
+}
 
 // =====================================
 // PAGE LOAD
@@ -23,12 +159,16 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("🚀 PathPilot script loaded!");
 
     createDayButtons();
+    document.getElementById("planType")?.addEventListener("change", toggleAcademicFields);
+    toggleAcademicFields();
 
     if (localStorage.getItem("pathpilotReminders") === "enabled") {
         document.getElementById("reminderBtn")?.classList.add("enabled");
     }
 
     const savedPlanId = localStorage.getItem("pathpilotPlanId");
+
+    renderSavedPlans();
 
     if (savedPlanId) {
         currentPlanId = Number(savedPlanId);
@@ -59,8 +199,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const goal =
                 document.getElementById("goal").value.trim();
 
-            const level =
-                document.getElementById("level").value;
+            const planType =
+                document.getElementById("planType").value;
 
             const days =
                 Number(document.getElementById("days").value);
@@ -68,8 +208,20 @@ document.addEventListener("DOMContentLoaded", () => {
             const dailyMinutes =
                 Number(document.getElementById("minutes").value);
 
-            const startTime =
-                document.getElementById("startTime").value;
+            const startTime = getStartTime();
+            const startMinutes = getSelectedMinutes("startHour", "startMinute", "startPeriod");
+            const endMinutes = getSelectedMinutes("endHour", "endMinute", "endPeriod");
+            const endTime = getEndTime();
+            const selectedDailyMinutes = endMinutes > startMinutes
+                ? endMinutes - startMinutes
+                : endMinutes + 24 * 60 - startMinutes;
+
+            const subjects = document.getElementById("subjects").value
+                .split(/[\n,]/)
+                .map(subject => subject.trim())
+                .filter(Boolean);
+
+            const examDays = Number(document.getElementById("examDays").value);
 
 
             // =====================================
@@ -102,7 +254,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // VALIDATION
             // =====================================
 
-            if (!goal) {
+            if (planType === "career" && !goal) {
 
                 showToast("⚠️ Please enter your goal");
 
@@ -115,6 +267,16 @@ document.addEventListener("DOMContentLoaded", () => {
                     "⚠️ Select at least one study day"
                 );
 
+                return;
+            }
+
+            if (planType === "academic" && !subjects.length) {
+                showToast("⚠️ Add at least one exam subject");
+                return;
+            }
+
+            if (selectedDailyMinutes < 20 || selectedDailyMinutes > 720) {
+                showToast("⚠️ Choose an end time 20 minutes to 12 hours after start");
                 return;
             }
 
@@ -153,21 +315,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
                                 goal: goal,
 
-                                level: level,
+                                plan_type: planType,
 
-                                days: days,
+                                days: planType === "academic" ? examDays : days,
 
                                 daily_minutes:
-                                    dailyMinutes,
+                                    selectedDailyMinutes || dailyMinutes,
 
                                 start_time:
                                     startTime,
 
+                                end_time:
+                                    endTime,
+
                                 study_days:
                                     studyDays,
 
-                                known_skills:
-                                    knownSkills
+                                known_skills: knownSkills,
+                                subjects: subjects,
+                                exam_days: examDays
                             })
                         }
                     );
@@ -203,6 +369,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     currentPlanId
                 );
 
+                persistPlanSummary(goal);
 
                 // =====================================
                 // SHOW DASHBOARD
@@ -279,6 +446,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     "pathpilotPlanId"
                 );
 
+                renderSavedPlans();
 
                 showToast(
                     "✨ Ready for a new plan!"
@@ -346,6 +514,14 @@ function createDayButtons() {
     });
 }
 
+function toggleAcademicFields() {
+    const academicFields = document.getElementById("academicFields");
+    const academic = document.getElementById("planType")?.value === "academic";
+    academicFields?.classList.toggle("hidden", !academic);
+    document.getElementById("subjects")?.toggleAttribute("required", academic);
+    document.getElementById("examDays")?.toggleAttribute("required", academic);
+}
+
 
 // =====================================
 // SHOW DASHBOARD
@@ -354,6 +530,7 @@ function createDayButtons() {
 function showDashboard(tasks, goal) {
 
     console.log("📊 SHOW DASHBOARD");
+    renderSavedPlans();
 
     const setupCard =
         document.getElementById(
@@ -401,6 +578,7 @@ function showDashboard(tasks, goal) {
 
     // Render missions
     renderTasks(tasks);
+    scheduleNotifications(tasks);
 
     renderCalendar(tasks);
     loadAnalytics();
@@ -482,9 +660,9 @@ function renderTasks(tasks) {
                 </p>
 
                 <p class="time">
-                    ⏰ ${task.start_time}
+                    ⏰ ${formatClock(task.start_time)}
                     -
-                    ${task.end_time}
+                    ${formatClock(task.end_time)}
                 </p>
 
             </div>
@@ -973,6 +1151,10 @@ function showToast(message) {
     toast.textContent =
         message;
 
+    if (localStorage.getItem("pathpilotReminders") === "enabled") {
+        playNotificationSound();
+    }
+
 
     toast.classList.add(
         "show"
@@ -1015,6 +1197,7 @@ async function restoreSavedPlan() {
         }
 
         showDashboard(result.tasks, result.plan.goal);
+        renderSavedPlans();
 
     } catch (error) {
 
@@ -1038,7 +1221,7 @@ function renderCalendar(tasks) {
     calendar.innerHTML = Object.entries(grouped).slice(0, 7).map(([date, dayTasks]) => `
         <div class="calendarDay">
             <div class="calendarDate"><b>${new Date(`${date}T00:00:00`).toLocaleDateString(undefined, { weekday: "short" })}</b><span>${date.slice(5)}</span></div>
-            <div class="calendarTasks">${dayTasks.map(task => `<span class="scheduleItem ${task.completed ? "isDone" : ""}"><i></i>${task.start_time} ${task.title}</span>`).join("")}</div>
+            <div class="calendarTasks">${dayTasks.map(task => `<span class="scheduleItem ${task.completed ? "isDone" : ""}"><i></i>${formatClock(task.start_time)} ${task.title}</span>`).join("")}</div>
         </div>
     `).join("");
 }
@@ -1098,6 +1281,7 @@ async function enableReminders() {
     }
 
     localStorage.setItem("pathpilotReminders", "enabled");
+    playNotificationSound();
     document.getElementById("reminderBtn").classList.add("enabled");
     showToast("Daily study reminders enabled");
 }

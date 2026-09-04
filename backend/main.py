@@ -46,6 +46,17 @@ def init_db():
         )
     """)
 
+    for column, definition in (
+        ("plan_type", "TEXT DEFAULT 'career'"),
+        ("subjects", "TEXT DEFAULT '[]'"),
+        ("exam_days", "INTEGER"),
+        ("end_time", "TEXT")
+    ):
+        try:
+            cursor.execute(f"ALTER TABLE plans ADD COLUMN {column} {definition}")
+        except sqlite3.OperationalError:
+            pass
+
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS tasks (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -70,12 +81,15 @@ app.mount("/frontend", StaticFiles(directory=FRONTEND_DIR, html=True), name="fro
 
 class PlanRequest(BaseModel):
     goal: str
-    level: str
     days: int
     daily_minutes: int
     start_time: str
     study_days: List[str]
+    plan_type: str = "career"
+    end_time: str | None = None
     known_skills: List[str] = []
+    subjects: List[str] = []
+    exam_days: int | None = None
 
 
 # =========================
@@ -267,11 +281,15 @@ def get_topics(goal):
             return topics
 
     return [
-        ("Fundamentals", 180),
-        ("Core Concepts", 240),
-        ("Practice", 240),
-        ("Mini Project", 300),
-        ("Revision", 120)
+        ("Technology Fundamentals & Introduction", 180),
+        ("Core Concepts & Terminology", 210),
+        ("Tools, Setup & Environment", 180),
+        ("Basic Workflow & Practices", 240),
+        ("Hands-on Tech Exercises", 240),
+        ("Mini Project Build", 300),
+        ("Debugging & Optimization", 180),
+        ("Portfolio Project", 300),
+        ("Revision & Interview Prep", 180)
     ]
 
 
@@ -298,6 +316,43 @@ def add_minutes(time_string, minutes):
 # =========================
 
 def generate_tasks(request):
+    daily_minutes = request.daily_minutes
+    if request.end_time:
+        start = datetime.strptime(request.start_time, "%H:%M")
+        end = datetime.strptime(request.end_time, "%H:%M")
+        daily_minutes = int((end - start).total_seconds() // 60)
+        if daily_minutes <= 0:
+            daily_minutes += 24 * 60
+
+    if request.plan_type == "academic":
+        subjects = [subject.strip() for subject in request.subjects if subject.strip()]
+        if not subjects:
+            return []
+
+        tasks = []
+        today = datetime.now().date()
+        subject_minutes = max(20, daily_minutes // len(subjects))
+        schedule_days = min(request.days, request.exam_days or request.days)
+
+        for day_number in range(1, schedule_days + 1):
+            current_date = today + timedelta(days=day_number - 1)
+            if current_date.strftime("%A") not in request.study_days:
+                continue
+
+            current_time = request.start_time
+            for subject in subjects:
+                end_time = add_minutes(current_time, subject_minutes)
+                tasks.append({
+                    "day_number": day_number,
+                    "date": current_date.isoformat(),
+                    "title": f"{subject} revision",
+                    "start_time": current_time,
+                    "end_time": end_time,
+                    "completed": False
+                })
+                current_time = end_time
+
+        return tasks
 
     topics = get_topics(request.goal)
 
@@ -322,7 +377,7 @@ def generate_tasks(request):
 
             session_time = min(
                 remaining,
-                request.daily_minutes
+                daily_minutes
             )
 
             sessions.append(
@@ -357,7 +412,7 @@ def generate_tasks(request):
 
         current_time = request.start_time
 
-        remaining_daily_time = request.daily_minutes
+        remaining_daily_time = daily_minutes
 
         while (
             remaining_daily_time > 0
@@ -424,6 +479,10 @@ def create_plan(request: PlanRequest):
         (
             goal,
             level,
+            plan_type,
+            subjects,
+            exam_days,
+            end_time,
             days,
             daily_minutes,
             start_time,
@@ -431,11 +490,15 @@ def create_plan(request: PlanRequest):
             known_skills,
             created_at
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, (
 
         request.goal,
-        request.level,
+        "Academic" if request.plan_type == "academic" else "Career",
+        request.plan_type,
+        json.dumps(request.subjects),
+        request.exam_days,
+        request.end_time,
         request.days,
         request.daily_minutes,
         request.start_time,

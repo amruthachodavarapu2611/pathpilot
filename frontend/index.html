@@ -53,7 +53,7 @@
 
     <p>
         Tell PathPilot what you want to achieve,
-        how much time you have and your current level.
+        how much time you have and your exam countdown.
         We'll create your personalized learning schedule.
     </p>
 
@@ -87,7 +87,6 @@
                     id="goal"
                     type="text"
                     placeholder="Example: Data Analyst"
-                    required
                 >
 
             </div>
@@ -97,23 +96,12 @@
             <div>
 
                 <label>
-                    Current Level
+                    Plan Type
                 </label>
 
-                <select id="level">
-
-                    <option value="Beginner">
-                        Beginner
-                    </option>
-
-                    <option value="Intermediate">
-                        Intermediate
-                    </option>
-
-                    <option value="Advanced">
-                        Advanced
-                    </option>
-
+                <select id="planType">
+                    <option value="career">Career roadmap</option>
+                    <option value="academic">Academic exam plan</option>
                 </select>
 
             </div>
@@ -123,7 +111,7 @@
             <div>
 
                 <label>
-                    How many days?
+                    Planning days
                 </label>
 
                 <input
@@ -142,7 +130,7 @@
             <div>
 
                 <label>
-                    Daily Learning Time
+                    Daily Learning Time (minutes)
                 </label>
 
                 <input
@@ -167,16 +155,60 @@
                     Start Time
                 </label>
 
-                <input
-                    id="startTime"
-                    type="time"
-                    value="18:00"
-                    required
-                >
+                <div class="timePicker" aria-label="Start time">
+                    <select id="startHour" required>
+                        <option value="1">1</option><option value="2">2</option>
+                        <option value="3">3</option><option value="4">4</option>
+                        <option value="5">5</option><option value="6" selected>6</option>
+                        <option value="7">7</option><option value="8">8</option>
+                        <option value="9">9</option><option value="10">10</option>
+                        <option value="11">11</option><option value="12">12</option>
+                    </select>
+                    <span>:</span>
+                    <select id="startMinute" required>
+                        <option value="00" selected>00</option><option value="15">15</option>
+                        <option value="30">30</option><option value="45">45</option>
+                    </select>
+                    <select id="startPeriod" required>
+                        <option value="AM">AM</option>
+                        <option value="PM" selected>PM</option>
+                    </select>
+                </div>
 
             </div>
 
+            <div>
+                <label>End Time</label>
+                <div class="timePicker" aria-label="End time">
+                    <select id="endHour" required>
+                        <option value="1">1</option><option value="2">2</option>
+                        <option value="3">3</option><option value="4">4</option>
+                        <option value="5">5</option><option value="6">6</option>
+                        <option value="7" selected>7</option><option value="8">8</option>
+                        <option value="9">9</option><option value="10">10</option>
+                        <option value="11">11</option><option value="12">12</option>
+                    </select>
+                    <span>:</span>
+                    <select id="endMinute" required>
+                        <option value="00" selected>00</option><option value="15">15</option>
+                        <option value="30">30</option><option value="45">45</option>
+                    </select>
+                    <select id="endPeriod" required>
+                        <option value="AM">AM</option>
+                        <option value="PM" selected>PM</option>
+                    </select>
+                </div>
+            </div>
 
+        </div>
+
+        <div id="academicFields" class="academicFields hidden">
+            <label for="subjects">Exam subjects</label>
+            <textarea id="subjects" rows="3" placeholder="Mathematics, Physics, Chemistry"></textarea>
+            <small>Separate subjects with commas or put one subject on each line.</small>
+
+            <label for="examDays">Days left until your exam</label>
+            <input id="examDays" type="number" min="1" max="365" value="14">
         </div>
 
 
@@ -319,7 +351,7 @@
                 <span class="eyebrow">THIS WEEK</span>
                 <h3>Daily schedule</h3>
             </div>
-            <button class="iconButton" id="reminderBtn" type="button" title="Enable study reminders">🔔</button>
+            <button class="iconButton" id="reminderBtn" type="button" title="Enable study reminders and sound">🔔</button>
         </div>
         <div id="calendar" class="calendar"></div>
     </div>
@@ -339,32 +371,25 @@
 
 
 
-<div class="missionHeader">
-
+<div class="planBar">
     <div>
-
         <div class="eyebrow">
             YOUR ROADMAP
         </div>
-
         <h2 id="goalTitle"></h2>
-
     </div>
 
-
-    <button
-        class="secondary"
-        id="newPlan"
-        type="button"
-    >
-
-        + New Plan
-
-    </button>
-
+    <div class="planActions">
+        <button class="secondary" id="newPlan" type="button">+ New Plan</button>
+    </div>
 </div>
 
-
+<div class="savedPlansWrap">
+    <div class="savedPlansHeader">
+        <span class="eyebrow">Saved plans</span>
+    </div>
+    <div id="savedPlansList" class="savedPlansList"></div>
+</div>
 
 <div id="taskList"></div>
 
